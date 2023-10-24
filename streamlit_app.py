@@ -8,11 +8,12 @@ model_name = "petals-team/StableBeluga2"  # This one is fine-tuned Llama 2 (70B)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoDistributedModelForCausalLM.from_pretrained(model_name)
 system_prompt = "### System:\nYou are Stable Beluga, an AI that is very precise. Be as accurate as you can.\n\n"
-
+conv=system_prompt
 message = st.chat_input('Message')
 if message:
-    prompt = f"{system_prompt}### User: {message}\n\n### Assistant:\n"
+    prompt = f"### User: {message}\n\n### Assistant:\n"
+    conv+=prompt
     # Run the model as if it were on your computer
-    inputs = tokenizer(prompt, return_tensors="pt")["input_ids"]
+    inputs = tokenizer(conv, return_tensors="pt")["input_ids"]
     outputs = model.generate(inputs, max_new_tokens=256)
     st.write(tokenizer.decode(outputs[0])[3:-4])
